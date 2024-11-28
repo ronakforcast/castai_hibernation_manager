@@ -1,0 +1,21 @@
+secret:
+  name: cast-api-key-secret
+  apiKey: "eW91cl9hcGlfa2V5"  # Base64 encoded API key
+
+configMap:
+  name: schedule-config
+  schedules:
+    - cluster_id: cluster1
+      hibernate_cron: "0 22 * * *"
+      resume_cron: "0 8 * * *"
+    - cluster_id: cluster2
+      hibernate_cron: "0 23 * * *"
+      resume_cron: "0 9 * * *"
+
+deployment:
+  name: cast-hibernate-manager
+  replicas: 1
+  image: castai/central_hibernate_manager:latest
+  instanceType: "t2.medium"
+  labels:
+    app: cast-hibernate-manager

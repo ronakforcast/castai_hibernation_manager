@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.deployment.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.deployment.labels.app }}
+    spec:
+      containers:
+      - name: scheduler
+        image: {{ .Values.deployment.image }}
+        env:
+        - name: INSTANCE_TYPE
+          value: {{ .Values.deployment.instanceType | quote }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.secret.name }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/schedule
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ .Values.configMap.name }}
