@@ -28,16 +28,16 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cluster-scheduler
+  name: cast-hibernate-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cluster-scheduler
+      app: cast-hibernate-manager
   template:
     metadata:
       labels:
-        app: cluster-scheduler
+        app: cast-hibernate-manager
     spec:
       containers:
       - name: scheduler
