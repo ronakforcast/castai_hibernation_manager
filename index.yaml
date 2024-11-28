@@ -3,7 +3,17 @@ entries:
   cluster-hibernate-manager-chart:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2024-11-28T13:22:02.362173+05:30"
+    created: "2024-11-28T13:28:36.879038+05:30"
+    description: A Helm chart for deploying a cluster scheduler
+    digest: c18de973de40fe0212d325322c23d447756e3f1128c8967fab79b65bd340041a
+    name: cluster-hibernate-manager-chart
+    type: application
+    urls:
+    - https://ronakforcast.github.io/castai_hibernation_manager/cluster-hibernate-manager-chart-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2024-11-28T13:28:36.879465+05:30"
     description: A Helm chart for deploying a cluster scheduler
     digest: 2d6dd585990b51250adb66d7be1eff8f602c756acfdff7d62c11b3b7622604d3
     name: cluster-hibernate-manager-chart
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://ronakforcast.github.io/castai_hibernation_manager/cluster-hibernate-manager-chart/cluster-hibernate-manager-chart-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-28T13:22:02.361509+05:30"
+generated: "2024-11-28T13:28:36.877904+05:30"
