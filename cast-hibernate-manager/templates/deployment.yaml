@@ -1,30 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.deployment.name }}
+  name: cast-hibernate-manager
 spec:
-  replicas: {{ .Values.deployment.replicas }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.deployment.labels.app }}
+      app: cast-hibernate-manager
   template:
     metadata:
       labels:
-        app: {{ .Values.deployment.labels.app }}
+        app: cast-hibernate-manager
     spec:
       containers:
       - name: scheduler
-        image: {{ .Values.deployment.image }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
         - name: INSTANCE_TYPE
-          value: {{ .Values.deployment.instanceType | quote }}
+          value: {{ .Values.instanceType }}
         envFrom:
         - secretRef:
-            name: {{ .Values.secret.name }}
+            name: {{ .Values.apiKey.secretName }}
         volumeMounts:
         - name: config-volume
           mountPath: /etc/schedule
       volumes:
       - name: config-volume
         configMap:
-          name: {{ .Values.configMap.name }}
+          name: schedule-config

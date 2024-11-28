@@ -1,100 +1,119 @@
 #!/bin/bash
 
-# Set chart name and create chart
+# Set variables
 CHART_NAME="cast-hibernate-manager"
-helm create $CHART_NAME
+GITHUB_REPO="ronakforcast/castai_hibernation_manager"  # Replace with your actual GitHub repo
+VERSION="0.1.0"
 
-# Clean up unnecessary files
-rm -rf $CHART_NAME/templates/service.yaml $CHART_NAME/templates/ingress.yaml $CHART_NAME/templates/hpa.yaml $CHART_NAME/charts $CHART_NAME/tests
+# Create directory structure for Helm chart
+mkdir -p ${CHART_NAME}/{templates,charts,crds}
 
-# Update Chart.yaml
-cat <<EOF > $CHART_NAME/Chart.yaml
+# Create Chart.yaml
+cat > ${CHART_NAME}/Chart.yaml << EOF
 apiVersion: v2
-name: $CHART_NAME
-description: A Helm chart for managing hibernation schedules
-version: 1.0.0
-appVersion: "1.0"
+name: ${CHART_NAME}
+description: A Helm chart for Cast.ai Hibernate Manager
+version: ${VERSION}
+appVersion: "1.0.0"
 EOF
 
-# Create Secret template
-cat <<EOF > $CHART_NAME/templates/secret.yaml
+# Create values.yaml
+cat > ${CHART_NAME}/values.yaml << EOF
+replicaCount: 1
+
+image:
+  repository: castai/central_hibernate_manager
+  tag: latest
+  pullPolicy: IfNotPresent
+
+apiKey:
+  secretName: cast-api-key-secret
+  secretKey: api-key
+
+instanceType: t2.medium
+
+schedules:
+  - cluster_id: cluster1
+    hibernate_cron: "0 22 * * *"
+    resume_cron: "0 8 * * *"
+  - cluster_id: cluster2
+    hibernate_cron: "0 23 * * *"
+    resume_cron: "0 9 * * *"
+EOF
+
+# Create templates for Kubernetes resources
+# Secret Template
+cat > ${CHART_NAME}/templates/secret.yaml << EOF
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Values.secret.name }}
+  name: {{ .Values.apiKey.secretName }}
 type: Opaque
 data:
-  api-key: {{ .Values.secret.apiKey | quote }}
+  {{ .Values.apiKey.secretKey }}: {{ .Values.apiKey.secretValue | b64enc }}
 EOF
 
-# Create ConfigMap template
-cat <<EOF > $CHART_NAME/templates/configmap.yaml
+# ConfigMap Template
+cat > ${CHART_NAME}/templates/configmap.yaml << EOF
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.configMap.name }}
+  name: schedule-config
 data:
   schedules.json: |
-    {{ .Values.configMap.schedules | toJson }}
+    {{ toJson .Values.schedules }}
 EOF
 
-# Create Deployment template
-cat <<EOF > $CHART_NAME/templates/deployment.yaml
+# Deployment Template
+cat > ${CHART_NAME}/templates/deployment.yaml << EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.deployment.name }}
+  name: cast-hibernate-manager
 spec:
-  replicas: {{ .Values.deployment.replicas }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.deployment.labels.app }}
+      app: cast-hibernate-manager
   template:
     metadata:
       labels:
-        app: {{ .Values.deployment.labels.app }}
+        app: cast-hibernate-manager
     spec:
       containers:
       - name: scheduler
-        image: {{ .Values.deployment.image }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
         - name: INSTANCE_TYPE
-          value: {{ .Values.deployment.instanceType | quote }}
+          value: {{ .Values.instanceType }}
         envFrom:
         - secretRef:
-            name: {{ .Values.secret.name }}
+            name: {{ .Values.apiKey.secretName }}
         volumeMounts:
         - name: config-volume
           mountPath: /etc/schedule
       volumes:
       - name: config-volume
         configMap:
-          name: {{ .Values.configMap.name }}
+          name: schedule-config
 EOF
 
-# Populate values.yaml with default values
-cat <<EOF > $CHART_NAME/values.yaml
-secret:
-  name: cast-api-key-secret
-  apiKey: "eW91cl9hcGlfa2V5"  # Base64 encoded API key
+# Package the Helm chart
+helm package ${CHART_NAME}
 
-configMap:
-  name: schedule-config
-  schedules:
-    - cluster_id: cluster1
-      hibernate_cron: "0 22 * * *"
-      resume_cron: "0 8 * * *"
-    - cluster_id: cluster2
-      hibernate_cron: "0 23 * * *"
-      resume_cron: "0 9 * * *"
+# Create or update Helm chart repository index
+helm repo index . --url https://raw.githubusercontent.com/${GITHUB_REPO}/main/
 
-deployment:
-  name: cast-hibernate-manager
-  replicas: 1
-  image: castai/central_hibernate_manager:latest
-  instanceType: "t2.medium"
-  labels:
-    app: cast-hibernate-manager
-EOF
+# Optional: Remove temporary files
+rm -f *.tgz
 
-echo "Helm chart $CHART_NAME has been set up successfully!"
+# Git commands to push to GitHub (uncomment and modify as needed)
+# git init
+# git add .
+# git commit -m "Add Cast Hibernate Manager Helm Chart v${VERSION}"
+# git branch -M main
+# git remote add origin https://github.com/${GITHUB_REPO}.git
+# git push -u origin main
+
+echo "Helm chart for Cast Hibernate Manager has been created and prepared for deployment."

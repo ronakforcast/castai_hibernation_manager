@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.configMap.name }}
+  name: schedule-config
 data:
   schedules.json: |
-    {{ .Values.configMap.schedules | toJson }}
+    {{ toJson .Values.schedules }}
