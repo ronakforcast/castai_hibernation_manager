@@ -3,11 +3,11 @@ entries:
   cast-hibernate-manager:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-11-28T14:11:13.589304+05:30"
+    created: "2024-11-28T14:15:52.171326+05:30"
     description: A Helm chart for Cast.ai Hibernate Manager
-    digest: ba6df8fe9f83210ea81091e0d2ebe5ac3aa26511e574120fc45f83ac819ff0a7
+    digest: 967b17885d047f1900e3368db4d44f3594b120c89f770c96a9d66669cdf099c7
     name: cast-hibernate-manager
     urls:
     - https://raw.githubusercontent.com/ronakforcast/castai_hibernation_manager/main/cast-hibernate-manager-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-28T14:11:13.588252+05:30"
+generated: "2024-11-28T14:15:52.17055+05:30"

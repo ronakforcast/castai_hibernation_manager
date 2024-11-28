@@ -106,7 +106,7 @@ helm package ${CHART_NAME}
 helm repo index . --url https://raw.githubusercontent.com/${GITHUB_REPO}/main/
 
 # Optional: Remove temporary files
-rm -f *.tgz
+# rm -f *.tgz
 
 # Git commands to push to GitHub (uncomment and modify as needed)
 # git init

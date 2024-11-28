@@ -5,3 +5,14 @@ helm package cluster-hibernate-manager-chart
 helm repo index . --url https://ronakforcast.github.io/castai_hibernation_manager
 
 
+
+# Add the Helm repository
+helm repo add cast-hibernate-manager https://raw.githubusercontent.com/ronakforcast/castai_hibernation_manager/main/
+
+# Update repositories
+helm repo update
+
+helm install cast-hibernate-manager cast-hibernate-manager/cast-hibernate-manager \
+  --set apiKey.secretValue=wdwdwdw \
+  --namespace castai-agent-hibernate \
+  --create-namespace
