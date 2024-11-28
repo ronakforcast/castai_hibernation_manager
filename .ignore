@@ -13,6 +13,6 @@ helm repo add cast-hibernate-manager https://raw.githubusercontent.com/ronakforc
 helm repo update
 
 helm install cast-hibernate-manager cast-hibernate-manager/cast-hibernate-manager \
-  --set apiKey.secretValue=wdwdwdw \
+  --set apiKey.secretValue=your_apikey \
   --namespace castai-agent-hibernate \
   --create-namespace
