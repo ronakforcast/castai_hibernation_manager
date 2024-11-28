@@ -1,0 +1,7 @@
+helm repo add castai-hibernation-manager https://ronakforcast.github.io/castai_hibernation_manager
+helm install cluster-scheduler castai-hibernation-manager/cluster-hibernate-manager-chart
+
+helm package cluster-hibernate-manager-chart
+helm repo index . --url https://ronakforcast.github.io/castai_hibernation_manager
+
+
