@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-schedule-config
+data:
+  schedules.json: |
+    {{ toJson .Values.config.schedules | nindent 4 }}

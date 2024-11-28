@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cast-api-key-secret
+type: Opaque
+data:
+  api-key: eW91cl9hcGlfa2V5  # Replace with your actual API key
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: schedule-config
+data:
+  schedules.json: |
+    [
+      {
+        "cluster_id": "cluster1",
+        "hibernate_cron": "0 22 * * *",
+        "resume_cron": "0 8 * * *"
+      },
+      {
+        "cluster_id": "cluster2",
+        "hibernate_cron": "0 23 * * *",
+        "resume_cron": "0 9 * * *"
+      }
+    ]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cluster-scheduler
+  template:
+    metadata:
+      labels:
+        app: cluster-scheduler
+    spec:
+      containers:
+      - name: scheduler
+        image: castai/central_hibernate_manager:latest  # Replace with your actual Docker image
+        env:
+        - name: INSTANCE_TYPE
+          value: "t2.medium"  # Set the instance type (you can change it as needed)
+        envFrom:
+        - secretRef:
+            name: cast-api-key-secret
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/schedule
+      volumes:
+      - name: config-volume
+        configMap:
+          name: schedule-config
