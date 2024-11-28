@@ -86,12 +86,6 @@ helm uninstall cast-hibernate-manager -n cast-automation
    ```
 3. Use the base64 encoded value when installing the chart
 
-## Security Considerations
-- Never commit API keys directly to version control
-- Use base64 encoding for secret values
-- Rotate API keys periodically
-- Implement appropriate access controls
-
 ## Troubleshooting
 1. Ensure API key is correctly base64 encoded
 2. Check pod logs: 
@@ -103,7 +97,4 @@ helm uninstall cast-hibernate-manager -n cast-automation
    kubectl get secrets,configmaps -n cast-automation
    ```
 
-## Repository Details
-- Repository URL: https://github.com/ronakforcast/castai_hibernation_manager
-- Helm Chart Source: https://raw.githubusercontent.com/ronakforcast/castai_hibernation_manager/main/
-```
+
